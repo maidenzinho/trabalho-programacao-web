@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
     <meta charset="utf-8">
     <title>Registre-se</title>
@@ -12,7 +12,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 600px;
+            height: 500px;
         }
         .customInput {
             padding: 8px 15px;
@@ -32,27 +32,24 @@
             border: none;
             cursor: pointer;
             font-size: 16px;
-        }   
+        }
         html {
             background-color: #6f88be;
         }
         body {
             width: 600px;
-            height: 600px;
             margin: 20px auto;
             padding: 20px;
             border: 5px solid #f8de3c;
             background-color: #58acf4;
-        } 
+        }
         .honk-uniquifier {
             font-family: "Honk", system-ui;
             font-optical-sizing: auto;
             font-weight: 400;
             font-style: normal;
-            font-variation-settings:
-            "MORF" 15,
-            "SHLN" 50;
-        }    
+            font-variation-settings: "MORF" 15, "SHLN" 50;
+        }
         .message {
             margin-top: 10px;
             padding: 10px;
@@ -72,48 +69,50 @@
     <div class="estilo-elemento-homi">
         <div>
             <h1 class="honk-uniquifier">Registrar</h1>
-            <div>
-                <i class="fa-solid fa-signature"></i>
-                <input id="name" class="customInput" type="text" placeholder="Nome">
-            </div>
-            <div>
-                <i class="fa-solid fa-signature"></i>
-                <input id="surname" class="customInput" type="text" placeholder="Sobrenome">
-            </div>
-            <div>
-                <i class="fa-solid fa-envelope"></i>
-                <input id="email" class="customInput" type="email" placeholder="E-mail">
-            </div>
-            <div>
-                <i class="fa-solid fa-key"></i>
-                <input id="password" class="customInput" type="password" placeholder="Senha">
-            </div>
-            <div>
-                <i class="fa-solid fa-lock"></i>
-                <input id="confirm-password" class="customInput" type="password" placeholder="Confirma senha">
-            </div>
-            <div>
-                <i class="fa-solid fa-calendar-days"></i>
-                <input id="dob" class="customInput" type="date">
-            </div>
-            <button class="customButton" type="button" onclick="validateForm()">Registrar</button>
-            <div id="message" class="message"></div>
-            <br>
-            <a href="login.html">Já possui conta? Login</a>
+            <form id="registrationForm">
+                <div>
+                    <i class="fa-solid fa-signature"></i>
+                    <input id="name" class="customInput" type="text" placeholder="Nome" aria-label="Nome" required>
+                </div>
+                <div>
+                    <i class="fa-solid fa-signature"></i>
+                    <input id="sobrenome" class="customInput" type="text" placeholder="Sobrenome" aria-label="Sobrenome" required>
+                </div>
+                <div>
+                    <i class="fa-solid fa-envelope"></i>
+                    <input id="email" class="customInput" type="email" placeholder="E-mail" aria-label="E-mail" required>
+                </div>
+                <div>
+                    <i class="fa-solid fa-key"></i>
+                    <input id="password" class="customInput" type="password" placeholder="Senha" aria-label="Senha" required>
+                </div>
+                <div>
+                    <i class="fa-solid fa-lock"></i>
+                    <input id="confirm-password" class="customInput" type="password" placeholder="Confirma senha" aria-label="Confirma senha" required>
+                </div>
+                <div>
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <input id="data" class="customInput" type="date" aria-label="Data de nascimento" min="1900-01-01" max="2024-12-31" required>
+                </div>
+                <button class="customButton" type="button" onclick="validateForm()">Registrar</button>
+                <div id="message" class="message"></div>
+                <br>
+                <a href="login.html">Já possui conta? Login</a>
+            </form>
         </div>
     </div>
     <script>
         function validateForm() {
             const name = document.getElementById('name').value;
-            const surname = document.getElementById('surname').value;
+            const sobrenome = document.getElementById('sobrenome').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
-            const dob = document.getElementById('dob').value;
+            const data = document.getElementById('data').value;
             const messageDiv = document.getElementById('message');
 
-            function calculateAge(dob) {
-                const birthDate = new Date(dob);
+            function calculateAge(data) {
+                const birthDate = new Date(data);
                 const today = new Date();
                 let age = today.getFullYear() - birthDate.getFullYear();
                 const monthDifference = today.getMonth() - birthDate.getMonth();
@@ -128,7 +127,7 @@
                 return validDomains.some(domain => email.endsWith(domain));
             }
 
-            if (name && surname && email && password && confirmPassword && dob) {
+            if (name && sobrenome && email && password && confirmPassword && data) {
                 let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
 
                 if (registeredUsers.some(user => user.email === email)) {
@@ -140,7 +139,7 @@
                 if (password === confirmPassword) {
                     if (isValidEmailDomain(email)) {
                         if (password.length >= 10) {
-                            const age = calculateAge(dob);
+                            const age = calculateAge(data);
                             if (age >= 18) {
                                 registeredUsers.push({email, password}); // Salva a conta no localStorage
                                 localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
