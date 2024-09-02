@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <title>Registre-se</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Honk&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .estilo-elemento-homi {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 600px;
+        }
+        .customInput {
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            width: 280px;
+            box-sizing: border-box;
+        }
+        .customButton {
+            color: #fff;
+            background-color: chartreuse;
+            margin-top: 10px;
+            height: 35px;
+            width: 100px;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }   
+        html {
+            background-color: #6f88be;
+        }
+        body {
+            width: 600px;
+            height: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 5px solid #f8de3c;
+            background-color: #58acf4;
+        } 
+        .honk-uniquifier {
+            font-family: "Honk", system-ui;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+            font-variation-settings:
+            "MORF" 15,
+            "SHLN" 50;
+        }    
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="estilo-elemento-homi">
+        <div>
+            <h1 class="honk-uniquifier">Registrar</h1>
+            <div>
+                <i class="fa-solid fa-signature"></i>
+                <input id="name" class="customInput" type="text" placeholder="Nome">
+            </div>
+            <div>
+                <i class="fa-solid fa-signature"></i>
+                <input id="surname" class="customInput" type="text" placeholder="Sobrenome">
+            </div>
+            <div>
+                <i class="fa-solid fa-envelope"></i>
+                <input id="email" class="customInput" type="email" placeholder="E-mail">
+            </div>
+            <div>
+                <i class="fa-solid fa-key"></i>
+                <input id="password" class="customInput" type="password" placeholder="Senha">
+            </div>
+            <div>
+                <i class="fa-solid fa-lock"></i>
+                <input id="confirm-password" class="customInput" type="password" placeholder="Confirma senha">
+            </div>
+            <div>
+                <i class="fa-solid fa-calendar-days"></i>
+                <input id="dob" class="customInput" type="date">
+            </div>
+            <button class="customButton" type="button" onclick="validateForm()">Registrar</button>
+            <div id="message" class="message"></div>
+            <br>
+            <a href="login.html">Já possui conta? Login</a>
+        </div>
+    </div>
+    <script>
+        function validateForm() {
+            const name = document.getElementById('name').value;
+            const surname = document.getElementById('surname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const dob = document.getElementById('dob').value;
+            const messageDiv = document.getElementById('message');
+
+            function calculateAge(dob) {
+                const birthDate = new Date(dob);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDifference = today.getMonth() - birthDate.getMonth();
+                if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+
+            function isValidEmailDomain(email) {
+                const validDomains = ['@pucpr.br', '@pucpr.edu.br'];
+                return validDomains.some(domain => email.endsWith(domain));
+            }
+
+            if (name && surname && email && password && confirmPassword && dob) {
+                let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+
+                if (registeredUsers.some(user => user.email === email)) {
+                    messageDiv.textContent = 'E-mail já registrado. Por favor, faça login.';
+                    messageDiv.className = 'message error';
+                    return;
+                }
+
+                if (password === confirmPassword) {
+                    if (isValidEmailDomain(email)) {
+                        if (password.length >= 10) {
+                            const age = calculateAge(dob);
+                            if (age >= 18) {
+                                registeredUsers.push({email, password}); // Salva a conta no localStorage
+                                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                                messageDiv.textContent = 'Registrado com sucesso';
+                                messageDiv.className = 'message success';
+                            } else {
+                                messageDiv.textContent = 'Você deve ter 18 anos ou mais';
+                                messageDiv.className = 'message error';
+                            }
+                        } else {
+                            messageDiv.textContent = 'A senha deve ter pelo menos 10 caracteres';
+                            messageDiv.className = 'message error';
+                        }
+                    } else {
+                        messageDiv.textContent = 'O e-mail deve ser @pucpr.br ou @pucpr.edu.br';
+                        messageDiv.className = 'message error';
+                    }
+                } else {
+                    messageDiv.textContent = 'As senhas não coincidem';
+                    messageDiv.className = 'message error';
+                }
+            } else {
+                messageDiv.textContent = 'Por favor, preencha todos os campos';
+                messageDiv.className = 'message error';
+            }
+        }
+    </script>
+</body>
+</html>
